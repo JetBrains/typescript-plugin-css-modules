@@ -291,6 +291,19 @@ describe('helpers / cssSnapshots', () => {
       });
       expect(dts).toMatchSnapshot();
     });
+
+    it('should return a line-accurate dts file with default export', () => {
+      const dts = createDtsExports({
+        cssExports,
+        fileName,
+        logger,
+        options: {
+          ...options,
+          goToDefinition: 'default',
+        },
+      });
+      expect(dts).toMatchSnapshot();
+    });
   });
 
   describe('with noUncheckedIndexedAccess enabled', () => {

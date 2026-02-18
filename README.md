@@ -1,11 +1,13 @@
 # typescript-plugin-css-modules
 
-[![npm](https://img.shields.io/npm/v/typescript-plugin-css-modules)](https://www.npmjs.com/package/typescript-plugin-css-modules)
-[![npm](https://img.shields.io/npm/dw/typescript-plugin-css-modules)](https://www.npmjs.com/package/typescript-plugin-css-modules)
-[![license](https://img.shields.io/npm/l/typescript-plugin-css-modules)](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/develop/LICENSE)
+[![npm](https://img.shields.io/npm/v/typescript-plugin-css-modules)](https://www.npmjs.com/package/@jetbrains/typescript-plugin-css-modules)
+[![npm](https://img.shields.io/npm/dw/@jetbrains/typescript-plugin-css-modules)](https://www.npmjs.com/package/typescript-plugin-css-modules)
+[![license](https://img.shields.io/npm/l/@jetbrains/typescript-plugin-css-modules)](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/develop/LICENSE)
 
 A [TypeScript language service plugin](https://github.com/Microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)
 for [CSS Modules](https://github.com/css-modules/css-modules).
+
+_Note: this is the JetBrains fork of the [original plugin](https://github.com/mrmckeb/typescript-plugin-css-modules/) with fixes for some issues._
 
 <img src="https://raw.githubusercontent.com/mrmckeb/typescript-plugin-css-modules/main/.github/images/example.gif" alt="typescript-plugin-css-modules example" />
 
@@ -45,18 +47,23 @@ If you need a different solution, these projects might help:
 - For Jest support, see https://www.npmjs.com/package/jest-css-modules-transform (one of a few options).
 - For Webpack configuration, see https://webpack.js.org/loaders/css-loader/#pure-css-css-modules-and-postcss for an example.
 
+## TypeScript requirements
+
+- Minimum: v5.5, because TypeScript supports paths in the `plugins.name` configuration only starting with this version.
+- Maximum: v6, because TypeScript Go (v7) doesn't have a plugin API yet.
+
 ## Installation
 
 To install with Yarn:
 
 ```sh
-yarn add -D typescript-plugin-css-modules
+yarn add -D @jetbrains/typescript-plugin-css-modules
 ```
 
 To install with npm:
 
 ```sh
-npm install -D typescript-plugin-css-modules
+npm install -D @jetbrains/typescript-plugin-css-modules
 ```
 
 Once installed, add this plugin to your `tsconfig.json`:
@@ -64,7 +71,7 @@ Once installed, add this plugin to your `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "plugins": [{ "name": "@jetbrains/typescript-plugin-css-modules" }]
   }
 }
 ```
@@ -105,7 +112,7 @@ Please note that no options are required. However, depending on your configurati
 | `customMatcher`            | `"\\.module\\.((c\|le\|sa\|sc)ss\|styl)$"` | Changes the file extensions that this plugin processes.                                                                                      |
 | `customRenderer`           | `false`                                    | See [`customRenderer`](#customRenderer) below.                                                                                               |
 | `customTemplate`           | `false`                                    | See [`customTemplate`](#customTemplate) below.                                                                                               |
-| `goToDefinition`           | `false`                                    | Enables jump to definition. See [`goToDefinition`](#goToDefinition) below.                                                                   |
+| `goToDefinition`           | `false`                                    | Enables jumping to definitions for both named and default imports. See [`goToDefinition`](#goToDefinition) below.                            |
 | `noUncheckedIndexedAccess` | `false`                                    | Enable for compatibility with TypeScript's `noUncheckedIndexedAccess`.                                                                       |
 | `namedExports`             | `true`                                     | Enables named exports for compatible classnames.                                                                                             |
 | `dotenvOptions`            | `{}`                                       | Provides options for [`dotenv`](https://github.com/motdotla/dotenv#options). Note that this plugin only accepts a `string` value for `path`. |
@@ -117,7 +124,7 @@ Please note that no options are required. However, depending on your configurati
   "compilerOptions": {
     "plugins": [
       {
-        "name": "typescript-plugin-css-modules",
+        "name": "@jetbrains/typescript-plugin-css-modules",
         "options": {
           "classnameTransform": "dashes",
           "customMatcher": "\\.m\\.css$",
@@ -221,7 +228,13 @@ The `classes` object represents all the classnames extracted from the CSS Module
 
 This allows an editor like Visual Studio Code to go to a classname's definition (file and line).
 
-This is experimental, and may not always work as expected. It currently supports CSS/PostCSS, Less, and Sass. Please raise an issue if you find something isn't working.
+You can enable `goToDefinition` for either named or default imports.
+
+| Value               | Description                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `false` (default)   | `goToDefinition` is not supported. Attempting to use it may take you to an unpredictable location in the CSS file. |
+| `true` or `"named"` | Enables `goToDefinition` for named imports.                                                                        |
+| `"default"`         | Enables `goToDefinition` for default imports.                                                                      |
 
 #### `postcssOptions`
 
@@ -254,7 +267,9 @@ If you aren't using any [plugin options](#options), you can simple add this plug
 
 ```json
 {
-  "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"]
+  "typescript.tsserver.pluginPaths": [
+    "@jetbrains/typescript-plugin-css-modules"
+  ]
 }
 ```
 

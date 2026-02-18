@@ -4,6 +4,7 @@ import { transformClasses } from './classTransforms';
 import { CSSExportsWithSourceMap } from './getCssExports';
 import { VALID_VARIABLE_REGEXP } from './validVarRegexp';
 import { Logger } from './logger';
+import assert from 'node:assert';
 
 const isValidVariable = (classname: string) =>
   VALID_VARIABLE_REGEXP.test(classname);
@@ -28,8 +29,8 @@ export const createDtsExports = ({
 
   const possiblyUndefined = Boolean(options.noUncheckedIndexedAccess);
 
-  const classnameToProperty = (classname: string) =>
-    `'${classname}'${possiblyUndefined ? '?' : ''}: string;`;
+  const classnameToIndentedProperty = (classname: string) =>
+    `  '${classname}'${possiblyUndefined ? '?' : ''}: string;`;
   const classnameToNamedExport = (classname: string) =>
     `export let ${classname}: string${
       possiblyUndefined ? ' | undefined' : ''
@@ -38,13 +39,21 @@ export const createDtsExports = ({
   const processedClasses = Object.keys(classes)
     .map(transformClasses(options.classnameTransform))
     .reduce(flattenClassNames, []);
-  const filteredClasses = processedClasses
-    .filter(isValidVariable)
-    .map(classnameToNamedExport);
 
   let dts = '';
 
-  if (options.goToDefinition && cssExports.sourceMap) {
+  const namedWithGoToDefinition =
+    (options.goToDefinition === true || options.goToDefinition === 'named') &&
+    !!cssExports.sourceMap;
+  const defaultWithGoToDefinition =
+    options.goToDefinition === 'default' && !!cssExports.sourceMap;
+  const namedSimple =
+    options.namedExports !== false && !namedWithGoToDefinition;
+  const defaultSimple = !defaultWithGoToDefinition;
+
+  if (namedWithGoToDefinition || defaultWithGoToDefinition) {
+    assert(cssExports.sourceMap);
+
     // Create a new source map consumer.
     const smc = new SourceMapConsumer(cssExports.sourceMap);
 
@@ -54,6 +63,10 @@ export const createDtsExports = ({
     // Create new equal size array of empty strings.
     const dtsLines = Array.from(Array(cssLines.length), () => '');
 
+    if (defaultWithGoToDefinition) {
+      dtsLines[0] += 'declare let _classes: {';
+    }
+
     // Create a list of filtered classnames and hashed classnames.
     const filteredClasses = Object.entries(cssExports.classes)
       .map(([classname, originalClassname]) => [
@@ -62,7 +75,10 @@ export const createDtsExports = ({
         transformClasses(options.classnameTransform)(classname)[0],
         originalClassname,
       ])
-      .filter(([classname]) => isValidVariable(classname));
+      .filter(
+        ([classname]) =>
+          defaultWithGoToDefinition || isValidVariable(classname),
+      );
 
     filteredClasses.forEach(([classname, originalClassname]) => {
       let matchedLine;
@@ -91,28 +107,34 @@ export const createDtsExports = ({
         column: matchedColumn ? matchedColumn : 0,
       });
 
-      dtsLines[lineNumber ? lineNumber - 1 : 0] +=
-        classnameToNamedExport(classname);
+      dtsLines[lineNumber ? lineNumber - 1 : 0] += defaultWithGoToDefinition
+        ? classnameToIndentedProperty(classname)
+        : classnameToNamedExport(classname);
     });
 
     dts = dtsLines.join('\n');
+
+    if (defaultWithGoToDefinition) {
+      dts += '\n};\nexport default _classes;\n';
+    }
   }
 
-  dts += `\
-declare let _classes: {
-  ${processedClasses.map(classnameToProperty).join('\n  ')}${
-    options.allowUnknownClassnames ? '\n  [key: string]: string;' : ''
+  if (defaultSimple) {
+    dts += 'declare let _classes: {\n';
+    for (const classname of processedClasses) {
+      dts += classnameToIndentedProperty(classname) + '\n';
+    }
+    if (options.allowUnknownClassnames) {
+      dts += '  [key: string]: string;\n';
+    }
+    dts += '};\nexport default _classes;\n';
   }
-};
-export default _classes;
-`;
 
-  if (
-    !options.goToDefinition &&
-    options.namedExports !== false &&
-    filteredClasses.length
-  ) {
-    dts += filteredClasses.join('\n') + '\n';
+  if (namedSimple) {
+    for (const classname of processedClasses) {
+      if (isValidVariable(classname))
+        dts += classnameToNamedExport(classname) + '\n';
+    }
   }
 
   if (options.customTemplate) {
