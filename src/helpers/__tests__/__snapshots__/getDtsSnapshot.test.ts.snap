@@ -73,7 +73,6 @@ exports[`helpers / cssSnapshots with baseUrl and paths in compilerOptions sass s
 
 exports[`helpers / cssSnapshots with file 'empty.module.less' createExports should create an exports file 1`] = `
 "declare let _classes: {
-  
 };
 export default _classes;
 "
@@ -84,7 +83,6 @@ exports[`helpers / cssSnapshots with file 'empty.module.less' getCssExports shou
 exports[`helpers / cssSnapshots with file 'empty.module.less' with a custom template should transform the generated dts 1`] = `
 "/* eslint-disable */
 declare let _classes: {
-  
 };
 export default _classes;
 
@@ -94,7 +92,6 @@ export type AllClassNames = '';"
 
 exports[`helpers / cssSnapshots with file 'empty.module.sass' createExports should create an exports file 1`] = `
 "declare let _classes: {
-  
 };
 export default _classes;
 "
@@ -105,7 +102,6 @@ exports[`helpers / cssSnapshots with file 'empty.module.sass' getCssExports shou
 exports[`helpers / cssSnapshots with file 'empty.module.sass' with a custom template should transform the generated dts 1`] = `
 "/* eslint-disable */
 declare let _classes: {
-  
 };
 export default _classes;
 
@@ -115,7 +111,6 @@ export type AllClassNames = '';"
 
 exports[`helpers / cssSnapshots with file 'empty.module.scss' createExports should create an exports file 1`] = `
 "declare let _classes: {
-  
 };
 export default _classes;
 "
@@ -126,7 +121,6 @@ exports[`helpers / cssSnapshots with file 'empty.module.scss' getCssExports shou
 exports[`helpers / cssSnapshots with file 'empty.module.scss' with a custom template should transform the generated dts 1`] = `
 "/* eslint-disable */
 declare let _classes: {
-  
 };
 export default _classes;
 
@@ -671,6 +665,65 @@ export default _classes;
 "
 `;
 
+exports[`helpers / cssSnapshots with goToDefinition enabled with CSS should return a line-accurate dts file with default export 1`] = `
+"declare let _classes: {  'classA': string;  'composed': string;  'composedFromOtherFile': string;
+
+
+
+  'classB': string;
+
+
+
+  'classC': string;
+
+
+
+  'classD': string;
+
+
+
+
+
+  'parent': string;  'childA': string;
+
+
+
+  'childB': string;  'nestedChild': string;
+
+
+
+
+
+  'fadeIn': string;
+
+
+
+
+
+
+
+
+
+
+
+
+
+};
+export default _classes;
+export let classA: string;
+export let classB: string;
+export let classC: string;
+export let classD: string;
+export let parent: string;
+export let childA: string;
+export let childB: string;
+export let nestedChild: string;
+export let composed: string;
+export let composedFromOtherFile: string;
+export let fadeIn: string;
+"
+`;
+
 exports[`helpers / cssSnapshots with goToDefinition enabled with CSS should return an object with classes, css, and a source map 1`] = `
 {
   "classes": {
@@ -835,6 +888,56 @@ declare let _classes: {
   'colorSet': string;
 };
 export default _classes;
+"
+`;
+
+exports[`helpers / cssSnapshots with goToDefinition enabled with Less should return a line-accurate dts file with default export 1`] = `
+"declare let _classes: {  'nestedClassParent': string;  'childClass': string;
+
+
+
+
+
+
+
+
+
+
+  'selectorBlue': string;  'selectorGreen': string;  'selectorRed': string;
+
+
+
+
+
+  'column1': string;  'column2': string;  'column3': string;  'column4': string;
+
+
+
+
+
+
+
+
+
+
+
+  'colorSet': string;
+
+
+
+
+};
+export default _classes;
+export let nestedClassParent: string;
+export let childClass: string;
+export let selectorBlue: string;
+export let selectorGreen: string;
+export let selectorRed: string;
+export let column1: string;
+export let column2: string;
+export let column3: string;
+export let column4: string;
+export let colorSet: string;
 "
 `;
 
@@ -1019,6 +1122,127 @@ declare let _classes: {
   'myFolderIndex': string;
 };
 export default _classes;
+"
+`;
+
+exports[`helpers / cssSnapshots with goToDefinition enabled with Sass should return a line-accurate dts file with default export 1`] = `
+"declare let _classes: {
+
+  'myFolderIndex': string;
+
+
+  'localClassInsideGlobal': string;
+
+
+
+
+  'localClass': string;
+
+
+
+
+  'localClass2': string;  'localClassInsideLocal': string;
+
+
+
+
+
+  'reservedWords': string;  'default': string;
+
+
+  'const': string;
+
+
+
+
+
+  'nestedClassParent': string;  'childClass': string;
+
+
+  'nestedClassParentExtended': string;
+
+
+
+
+
+
+
+  'section1': string;  'section2': string;  'section3': string;  'section4': string;  'section5': string;  'section6': string;  'section7': string;  'section8': string;  'section9': string;
+
+
+
+
+
+
+  'classWithMixin': string;
+
+
+
+  'appLogo': string;
+
+
+
+
+
+  'appLogo': string;
+  'myAnimation': string;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+};
+export default _classes;
+export let localClassInsideGlobal: string;
+export let localClass: string;
+export let localClass2: string;
+export let localClassInsideLocal: string;
+export let reservedWords: string;
+export let nestedClassParent: string;
+export let childClass: string;
+export let nestedClassParentExtended: string;
+export let section1: string;
+export let section2: string;
+export let section3: string;
+export let section4: string;
+export let section5: string;
+export let section6: string;
+export let section7: string;
+export let section8: string;
+export let section9: string;
+export let classWithMixin: string;
+export let appLogo: string;
+export let appLogo: string;
+export let myAnimation: string;
+export let myFolderIndex: string;
 "
 `;
 

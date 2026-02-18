@@ -28,7 +28,7 @@ export interface Options {
   customRenderer?: string;
   customTemplate?: string;
   dotenvOptions?: Omit<DotenvConfigOptions, 'path'> & { path?: string };
-  goToDefinition?: boolean;
+  goToDefinition?: string | boolean;
   namedExports?: boolean;
   noUncheckedIndexedAccess?: boolean;
   postcssOptions?: PostcssOptions;
